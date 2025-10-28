@@ -52,7 +52,7 @@ class TikTokScraper:
         service = Service(ChromeDriverManager().install())
         
         self.driver = webdriver.Chrome(service=service, options=chrome_options)
-        logger.info("✅ Driver Selenium initialisé")
+        logger.info("Driver Selenium initialisé")
     
     def scrape_video(self, video_url: str):
         """
@@ -65,7 +65,7 @@ class TikTokScraper:
             List[dict]: Liste des commentaires avec username et texte
         """
         try:
-            logger.info(f"🔍 Scraping de la vidéo: {video_url}")
+            logger.info(f"Scraping de la vidéo: {video_url}")
             self.driver.get(video_url)
             
             # Attendre le chargement de la page
@@ -85,11 +85,11 @@ class TikTokScraper:
             # Extraire les commentaires
             comments_data = self._extract_comments()
             
-            logger.info(f"✅ {len(comments_data)} commentaires scrapés")
+            logger.info(f"{len(comments_data)} commentaires scrapés")
             return comments_data
             
         except Exception as e:
-            logger.error(f"❌ Erreur lors du scraping: {e}")
+            logger.error(f"Erreur lors du scraping: {e}")
             raise
     
     def _extract_video_info(self):
@@ -135,11 +135,11 @@ class TikTokScraper:
                 'hashtags': hashtags
             }
             
-            logger.info(f"📹 Vidéo: {video_title}")
-            logger.info(f"🏷️ Hashtags: {hashtags}")
+            logger.info(f"Vidéo: {video_title}")
+            logger.info(f"Hashtags: {hashtags}")
             
         except Exception as e:
-            logger.error(f"❌ Erreur extraction infos vidéo: {e}")
+            logger.error(f"Erreur extraction infos vidéo: {e}")
             self.video_info = {'title': 'Unknown', 'hashtags': []}
     
     def _open_comments_section(self):
@@ -149,10 +149,10 @@ class TikTokScraper:
                 EC.element_to_be_clickable((By.XPATH, "//button[@data-e2e='comment-icon']"))
             )
             comments_button.click()
-            logger.info("💬 Section commentaires ouverte")
+            logger.info("Section commentaires ouverte")
             time.sleep(2)
         except TimeoutException:
-            logger.info("💬 Section commentaires déjà ouverte")
+            logger.info("Section commentaires déjà ouverte")
     
     def _scroll_to_load_all_comments(self):
         """Scroller pour charger tous les commentaires"""
@@ -161,7 +161,7 @@ class TikTokScraper:
                 EC.presence_of_element_located((By.XPATH, "//div[contains(@class, 'DivCommentListContainer')]"))
             )
             
-            logger.info("📜 Chargement de tous les commentaires...")
+            logger.info("Chargement de tous les commentaires...")
             last_height = self.driver.execute_script("return arguments[0].scrollHeight", comment_container)
             
             while True:
@@ -177,15 +177,15 @@ class TikTokScraper:
                     
                 last_height = new_height
             
-            logger.info("✅ Tous les commentaires chargés")
+            logger.info("Tous les commentaires chargés")
             
         except Exception as e:
-            logger.error(f"❌ Erreur lors du scroll: {e}")
+            logger.error(f"Erreur lors du scroll: {e}")
     
     def _extract_comments(self):
         """
         Extraire tous les commentaires de la page
-        Exclut automatiquement les commentaires de "Soeur bonplan 🎀"
+        Exclut automatiquement les commentaires de "Soeur bonplan"
         """
         try:
             comment_blocks = self.driver.find_elements(
@@ -194,7 +194,7 @@ class TikTokScraper:
             )
             
             comments_data = []
-            excluded_username = "soeur bonplan 🎀"
+            excluded_username = "soeur bonplan "
             
             for i, comment_block in enumerate(comment_blocks, 1):
                 try:
@@ -234,12 +234,12 @@ class TikTokScraper:
                         )
                         comment_text = comment_text_element.text.strip()
                     except NoSuchElementException:
-                        logger.warning(f"⚠️ Impossible de récupérer le texte du commentaire {i}")
+                        logger.warning(f"Impossible de récupérer le texte du commentaire {i}")
                         continue
                     
                     # Exclure les commentaires de l'utilisateur principal
                     if username.lower().strip() == excluded_username.lower():
-                        logger.info(f"⏭️ Commentaire exclu: {username}")
+                        logger.info(f"Commentaire exclu: {username}")
                         continue
                     
                     comments_data.append({
@@ -249,13 +249,13 @@ class TikTokScraper:
                     })
                     
                 except Exception as e:
-                    logger.error(f"❌ Erreur extraction commentaire {i}: {e}")
+                    logger.error(f"Erreur extraction commentaire {i}: {e}")
                     continue
             
             return comments_data
             
         except Exception as e:
-            logger.error(f"❌ Erreur extraction commentaires: {e}")
+            logger.error(f"Erreur extraction commentaires: {e}")
             return []
     
     def reply_to_comment(self, video_url: str, username: str, reply_text: str):
@@ -333,7 +333,7 @@ class TikTokScraper:
             except:
                 reply_input.send_keys(reply_text)
             
-            logger.info(f"✍️ Réponse saisie: {reply_text[:50]}...")
+            logger.info(f"Réponse saisie: {reply_text[:50]}...")
             time.sleep(2)
             
             # Publier la réponse
@@ -347,13 +347,13 @@ class TikTokScraper:
                 self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", publish_button)
                 time.sleep(1)
                 self.driver.execute_script("arguments[0].click();", publish_button)
-                logger.info(f"✅ Réponse publiée pour @{username}")
+                logger.info(f"Réponse publiée pour @{username}")
                 time.sleep(3)
             else:
                 raise Exception("Bouton publier non trouvé")
             
         except Exception as e:
-            logger.error(f"❌ Erreur lors de la réponse à @{username}: {e}")
+            logger.error(f"Erreur lors de la réponse à @{username}: {e}")
             raise
     
     def get_video_info(self):
@@ -364,7 +364,7 @@ class TikTokScraper:
         """Fermer le driver Selenium"""
         if self.driver:
             self.driver.quit()
-            logger.info("👋 Driver Selenium fermé")
+            logger.info("Driver Selenium fermé")
 
 # Test unitaire
 if __name__ == "__main__":
@@ -374,7 +374,7 @@ if __name__ == "__main__":
         video_url = "https://www.tiktok.com/@soeurbonplan/video/7524405570321894678"
         comments = scraper.scrape_video(video_url)
         
-        print(f"\n✅ {len(comments)} commentaires trouvés:")
+        print(f"\n{len(comments)} commentaires trouvés:")
         for comment in comments[:5]:  # Afficher les 5 premiers
             print(f"- @{comment['username']}: {comment['comment_text'][:50]}...")
         
