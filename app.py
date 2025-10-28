@@ -137,10 +137,10 @@ async def process_video_scraping(video_url: str, account_id: int):
                 'created_at': datetime.now()
             })
         
-        print(f"✅ Scraping terminé: {len(comments_data)} commentaires traités")
+        print(f"Scraping terminé: {len(comments_data)} commentaires traités")
         
     except Exception as e:
-        print(f"❌ Erreur lors du scraping: {e}")
+        print(f"Erreur lors du scraping: {e}")
     finally:
         # Fermer Selenium si besoin
         if scraper:
@@ -256,15 +256,15 @@ async def process_comment_publishing(comment_ids: List[int], account_id: int):
                 )
                 db.update_comment_status(comment['id'], 'published')
                 success_count += 1
-                print(f"✅ Commentaire publié pour @{comment['username']}")
+                print(f"Commentaire publié pour @{comment['username']}")
             except Exception as e:
-                print(f"❌ Échec publication pour @{comment['username']}: {e}")
+                print(f"Échec publication pour @{comment['username']}: {e}")
                 db.update_comment_status(comment['id'], 'failed')
         
-        print(f"✅ Publication terminée: {success_count}/{len(comments)} réussies")
+        print(f"Publication terminée: {success_count}/{len(comments)} réussies")
         
     except Exception as e:
-        print(f"❌ Erreur lors de la publication: {e}")
+        print(f"Erreur lors de la publication: {e}")
     finally:
         if scraper:
             scraper.close()
@@ -367,7 +367,7 @@ async def export_to_excel(account_id: Optional[int] = None):
 @app.on_event("startup")
 async def startup_event():
     """Initialisation au démarrage"""
-    print("🚀 API TikTok Comment Manager démarrée")
+    print("API TikTok Comment Manager démarrée")
     db.init_database()
 
 @app.on_event("shutdown")
@@ -376,7 +376,7 @@ async def shutdown_event():
     global scraper
     if scraper:
         scraper.close()
-    print("👋 API arrêtée proprement")
+    print("API arrêtée proprement")
 
 # ==================== LANCEMENT ====================
 
