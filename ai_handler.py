@@ -20,13 +20,13 @@ class AIResponseGenerator:
         
         if not api_key:
             raise ValueError(
-                "⚠️ OPENAI_API_KEY non trouvée. "
+                "OPENAI_API_KEY non trouvée. "
                 "Définissez la variable d'environnement: export OPENAI_API_KEY='sk-...'"
             )
         
         self.client = OpenAI(api_key=api_key)
         self.model = os.getenv("OPENAI_MODEL", "gpt-4")
-        logger.info(f"✅ Client OpenAI initialisé (modèle: {self.model})")
+        logger.info(f"Client OpenAI initialisé (modèle: {self.model})")
     
     def generate_batch_responses(
         self, 
@@ -50,7 +50,7 @@ class AIResponseGenerator:
             return []
         
         try:
-            logger.info(f"🤖 Génération de {len(comments_data)} réponses IA...")
+            logger.info(f"Génération de {len(comments_data)} réponses IA...")
             
             # Construire le prompt batch
             prompt = self._build_batch_prompt(comments_data, video_title, hashtags)
@@ -74,25 +74,25 @@ class AIResponseGenerator:
             
             # Parser la réponse JSON
             response_text = response.choices[0].message.content.strip()
-            logger.info(f"📥 Réponse API reçue ({len(response_text)} caractères)")
+            logger.info(f"Réponse API reçue ({len(response_text)} caractères)")
             
             # Nettoyer et parser le JSON
             parsed_responses = self._parse_json_response(response_text)
             
             if len(parsed_responses) != len(comments_data):
                 logger.warning(
-                    f"⚠️ Nombre de réponses ({len(parsed_responses)}) "
+                    f"Nombre de réponses ({len(parsed_responses)}) "
                     f"différent du nombre de commentaires ({len(comments_data)})"
                 )
             
-            logger.info(f"✅ {len(parsed_responses)} réponses générées avec succès")
+            logger.info(f" {len(parsed_responses)} réponses générées avec succès")
             return parsed_responses
             
         except Exception as e:
-            logger.error(f"❌ Erreur génération réponses IA: {e}")
+            logger.error(f" Erreur génération réponses IA: {e}")
             # Retourner des réponses par défaut en cas d'erreur
             return [
-                "Salam! Merci pour ton commentaire 💕" 
+                "Merci pour ton commentaire" 
                 for _ in comments_data
             ]
     
@@ -106,23 +106,22 @@ class AIResponseGenerator:
         
         hashtags_str = ', '.join(hashtags) if hashtags else 'Aucun hashtag'
         
-        prompt = f"""Tu es Copywriter GPT, un copywriter chaleureux et empathique pour TikTok. Tu réponds aux commentaires sur les vidéos de "Soeur Bon Plan 🎀", une créatrice de contenu lifestyle musulmane.
+        prompt = f"""Tu es Copywriter GPT, un copywriter chaleureux et empathique pour TikTok. Tu réponds aux commentaires sur les vidéos tiktok.
 
 CONTEXTE DE LA VIDÉO:
 - Titre: '{video_title}'
 - Hashtags: {hashtags_str}
-- Audience cible: Communauté musulmane féminine sur TikTok
+- Audience cible: Communauté
 - Objectif: Créer de l'engagement authentique et chaleureux
 
 INSTRUCTIONS IMPORTANTES:
 - Réponds à chaque commentaire avec MAXIMUM 114 caractères
-- Commence par "Salam [nom]" ou simplement "Salam" si le nom est long
+- Commence par "Coucou [nom]" ou simplement "Hello" si le nom est long
 - Ton chaleureux, amical, comme une grande sœur bienveillante
-- Utilise des expressions musulmanes légères (hamdoulillah, inshallah, Macha'Allah, Amine) de façon naturelle
 - Ne donne JAMAIS de conseils médicaux, juridiques ou religieux précis
 - Évite les questions ouvertes qui créent des débats
 - Reste positive, encourageante et authentique
-- Utilise des emojis appropriés (💕 🎀 ✨ 💖) mais avec modération
+- Utilise des emojis appropriés mais avec modération
 
 COMMENTAIRES À TRAITER:
 """
@@ -176,12 +175,12 @@ RAPPEL CRITIQUE: Chaque réponse doit faire MAXIMUM 114 caractères!
             
             # Retourner uniquement les textes de réponse
             return [
-                item.get("chatgpt_response", "Salam! Merci 💕") 
+                item.get("chatgpt_response", "Hello! Merci ") 
                 for item in responses
             ]
             
         except json.JSONDecodeError as e:
-            logger.error(f"❌ Erreur parsing JSON: {e}")
+            logger.error(f"Erreur parsing JSON: {e}")
             logger.error(f"Texte reçu: {response_text[:500]}...")
             raise
     
@@ -208,7 +207,7 @@ RAPPEL CRITIQUE: Chaque réponse doit faire MAXIMUM 114 caractères!
         try:
             hashtags_str = ', '.join(hashtags) if hashtags else 'Aucun hashtag'
             
-            prompt = f"""Tu es Copywriter GPT pour "Soeur Bon Plan 🎀".
+            prompt = f"""Tu es Copywriter GPT pour tiktok".
 
 CONTEXTE:
 - Vidéo: '{video_title}'
@@ -220,7 +219,7 @@ Commentaire: "{comment_text}"
 
 INSTRUCTIONS:
 - Réponds en MAXIMUM 114 caractères
-- Commence par "Salam {username}" ou "Salam"
+- Commence par "Hello {username}" ou "Hello"
 - Ton chaleureux de grande sœur
 - Utilise expressions musulmanes naturelles
 - Pas de conseils médicaux/juridiques/religieux précis
@@ -241,14 +240,14 @@ Retourne UNIQUEMENT la réponse (pas de JSON, juste le texte de la réponse)."""
             
             # Vérifier la longueur
             if len(ai_response) > 114:
-                logger.warning(f"⚠️ Réponse trop longue ({len(ai_response)} chars), troncature...")
+                logger.warning(f"Réponse trop longue ({len(ai_response)} chars), troncature...")
                 ai_response = ai_response[:111] + "..."
             
             return ai_response
             
         except Exception as e:
-            logger.error(f"❌ Erreur génération réponse unique: {e}")
-            return f"Salam {username}! Merci pour ton message 💕"
+            logger.error(f" Erreur génération réponse unique: {e}")
+            return f"Hello {username}! Merci pour ton message "
     
     def validate_response_length(self, response: str, max_length: int = 114) -> bool:
         """
@@ -282,7 +281,7 @@ Retourne UNIQUEMENT la réponse (pas de JSON, juste le texte de la réponse)."""
 # Test unitaire
 if __name__ == "__main__":
     # Pour tester, définir OPENAI_API_KEY dans l'environnement
-    # export OPENAI_API_KEY="sk-..."
+    # export OPENAI_API_KEY="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"
     
     try:
         ai_handler = AIResponseGenerator()
@@ -308,11 +307,11 @@ if __name__ == "__main__":
             hashtags
         )
         
-        print("\n✅ Réponses générées:")
+        print("\nRéponses générées:")
         for comment, response in zip(test_comments, responses):
             print(f"\n@{comment['username']}: {comment['comment_text']}")
             print(f"→ {response} ({len(response)} chars)")
         
     except Exception as e:
-        print(f"❌ Erreur test: {e}")
+        print(f"Erreur test: {e}")
         print("Assurez-vous que OPENAI_API_KEY est définie dans l'environnement")
