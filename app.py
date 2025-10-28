@@ -335,11 +335,10 @@ async def get_statistics(account_id: Optional[int] = None):
 
 @app.get("/api/export/excel")
 async def export_to_excel(account_id: Optional[int] = None):
-    """
-    Exporter les données en Excel
-    """
+    """Export Excel - Temporairement désactivé"""
+    raise HTTPException(status_code=501, detail="Export Excel temporairement désactivé")
     try:
-        import pandas as pd
+        # import pandas as pd
         from io import BytesIO
         from fastapi.responses import StreamingResponse
         
