@@ -18,7 +18,7 @@ class Database:
         """Initialiser la connexion à la base de données"""
         self.db_path = db_path
         self.conn = None
-        logger.info(f"📁 Base de données: {db_path}")
+        logger.info(f"Base de données: {db_path}")
     
     def get_connection(self):
         """Obtenir une connexion à la base de données"""
@@ -83,7 +83,7 @@ class Database:
         """)
         
         conn.commit()
-        logger.info("✅ Base de données initialisée")
+        logger.info("Base de données initialisée")
     
     # ==================== GESTION DES COMPTES ====================
     
@@ -108,11 +108,11 @@ class Database:
             
             conn.commit()
             account_id = cursor.lastrowid
-            logger.info(f"✅ Compte créé: {account_data['username']} (ID: {account_id})")
+            logger.info(f"Compte créé: {account_data['username']} (ID: {account_id})")
             return account_id
             
         except sqlite3.IntegrityError:
-            logger.error(f"❌ Compte {account_data['username']} existe déjà")
+            logger.error(f"Compte {account_data['username']} existe déjà")
             raise ValueError(f"Le compte {account_data['username']} existe déjà")
     
     def get_all_accounts(self) -> List[Dict]:
@@ -147,7 +147,7 @@ class Database:
         """, (active, account_id))
         
         conn.commit()
-        logger.info(f"✅ Compte {account_id} {'activé' if active else 'désactivé'}")
+        logger.info(f"Compte {account_id} {'activé' if active else 'désactivé'}")
     
     def delete_account(self, account_id: int):
         """Supprimer un compte"""
@@ -159,7 +159,7 @@ class Database:
         cursor.execute("DELETE FROM accounts WHERE id = ?", (account_id,))
         
         conn.commit()
-        logger.info(f"✅ Compte {account_id} supprimé")
+        logger.info(f"Compte {account_id} supprimé")
     
     # ==================== GESTION DES COMMENTAIRES ====================
     
@@ -191,7 +191,7 @@ class Database:
         
         conn.commit()
         comment_id = cursor.lastrowid
-        logger.info(f"✅ Commentaire sauvegardé (ID: {comment_id})")
+        logger.info(f"Commentaire sauvegardé (ID: {comment_id})")
         return comment_id
     
     def get_comments(
@@ -274,7 +274,7 @@ class Database:
         """, (status, comment_id))
         
         conn.commit()
-        logger.info(f"✅ Commentaire {comment_id} -> {status}")
+        logger.info(f"Commentaire {comment_id} -> {status}")
     
     def update_comment_response(self, comment_id: int, new_response: str, status: str = "validated"):
         """
@@ -295,7 +295,7 @@ class Database:
         """, (new_response, status, comment_id))
         
         conn.commit()
-        logger.info(f"✅ Réponse modifiée pour commentaire {comment_id}")
+        logger.info(f"Réponse modifiée pour commentaire {comment_id}")
     
     def delete_comment(self, comment_id: int):
         """Supprimer un commentaire"""
@@ -304,7 +304,7 @@ class Database:
         
         cursor.execute("DELETE FROM comments WHERE id = ?", (comment_id,))
         conn.commit()
-        logger.info(f"✅ Commentaire {comment_id} supprimé")
+        logger.info(f"Commentaire {comment_id} supprimé")
     
     # ==================== STATISTIQUES ====================
     
@@ -392,7 +392,7 @@ class Database:
         """Fermer la connexion à la base de données"""
         if self.conn:
             self.conn.close()
-            logger.info("👋 Connexion DB fermée")
+            logger.info("Connexion DB fermée")
 
 # Test unitaire
 if __name__ == "__main__":
@@ -406,7 +406,7 @@ if __name__ == "__main__":
             'username': '@soeurbonplan',
             'active': True
         })
-        print(f"✅ Compte créé: ID {account_id}")
+        print(f"Compte créé: ID {account_id}")
         
         # Sauvegarder un commentaire de test
         comment_id = db.save_comment({
@@ -414,19 +414,19 @@ if __name__ == "__main__":
             'account_id': account_id,
             'username': 'test_user',
             'comment_text': 'Super vidéo!',
-            'ai_response': 'Salam! Merci beaucoup 💕',
+            'ai_response': 'Salam! Merci beaucoup',
             'status': 'pending'
         })
-        print(f"✅ Commentaire créé: ID {comment_id}")
+        print(f"Commentaire créé: ID {comment_id}")
         
         # Récupérer les statistiques
         stats = db.get_statistics()
-        print(f"✅ Stats: {stats}")
+        print(f"Stats: {stats}")
         
         # Récupérer les comptes
         accounts = db.get_all_accounts()
-        print(f"✅ Comptes: {accounts}")
+        print(f"Comptes: {accounts}")
         
     finally:
         db.close()
-        print("✅ Test terminé")
+        print("Test terminé")
