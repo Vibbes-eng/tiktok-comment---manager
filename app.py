@@ -8,7 +8,7 @@ import os
 from datetime import datetime
 
 # Imports locaux
-from scraper import TikTokScraper
+# from scraper import TikTokScraper
 from ai_handler import AIResponseGenerator
 from database import Database
 
